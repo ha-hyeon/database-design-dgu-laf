@@ -1,13 +1,13 @@
 # 데이터베이스 설계 프로젝트
-## 동국대 분실물센터 앱 / DGU Lost And Found (dgu_laf)
+동국대 분실물센터 앱 / DGU Lost And Found (dgu_laf)
 
 
-# Backend
+## Backend
 
-## 개발한 API 목록
+#### 개발한 API 목록
 
 
-## 데이터베이스 스키마
+#### 데이터베이스 스키마
 
 Users
 
@@ -24,7 +24,7 @@ ItemComments
 ItemImages
 
 
-## src/ 디렉토리
+#### src/ 디렉토리
 
 └── main/
 
@@ -65,11 +65,11 @@ ItemImages
 
 
 
-# Frontend
+## Frontend
 
 
-## 개발한 스크린 목록
+#### 개발한 스크린 목록
 
 
-## 연동한 API 목록
+#### 연동한 API 목록
 
