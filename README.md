@@ -23,38 +23,71 @@ ItemImages
 
 #### src/ 디렉토리
 src/main/java/com/dgulaf/
+
 ├── controller/
+
 │   ├── ItemCommentController.java
+
 │   ├── ItemImageController.java
+
 │   ├── ItemLocationController.java
+
 │   ├── LostItemController.java
+
 │   ├── FoundItemController.java
+
 │   ├── SearchController.java
+
 │   ├── UserController.java
+
 ├── model/
+
 │   ├── Classroom.java
+
 │   ├── FoundItem.java
+
 │   ├── ItemComment.java
+
 │   ├── ItemImage.java
+
 │   ├── ItemLocation.java
+
 │   ├── LostItem.java
+
 │   ├── User.java
+
 ├── repository/
+
 │   ├── ItemCommentRepository.java
+
 │   ├── ItemImageRepository.java
+
 │   ├── ItemLocationRepository.java
+
 │   ├── LostItemRepository.java
+
 │   ├── FoundItemRepository.java
+
 │   ├── ClassroomRepository.java
+
 │   ├── UserRepository.java
+
 ├── service/
+
 │   ├── ItemCommentService.java
+
 │   ├── ItemImageService.java
+
 │   ├── ItemLocationService.java
+
 │   ├── LostItemService.java
+
 │   ├── FoundItemService.java
+
 │   ├── SearchService.java
+
 │   ├── UserService.java
+
 
 
 ## Frontend
