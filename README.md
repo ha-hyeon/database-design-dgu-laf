@@ -4,6 +4,7 @@
 
 ## Backend
 
+
 #### 데이터베이스 스키마
 
 Users
@@ -22,6 +23,7 @@ ItemImages
 
 
 #### src/ 디렉토리
+
 src/main/java/com/dgulaf/
 
 ├── controller/
@@ -92,9 +94,9 @@ src/main/java/com/dgulaf/
 
 ## Frontend
 
-
 #### 개발할 스크린 목록
 
 
 #### 연동할할 API 목록
+
 
