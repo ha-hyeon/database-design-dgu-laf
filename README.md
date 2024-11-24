@@ -4,8 +4,6 @@
 
 ## Backend
 
-#### 개발한 API 목록
-
 
 #### 데이터베이스 스키마
 
@@ -26,50 +24,79 @@ ItemImages
 
 #### src/ 디렉토리
 
-└── main/
+src/main/java/com/dgulaf/
 
-    ├── java/
+├── controller/
 
-    │   └── com.example.laf/
+│   ├── ItemCommentController.java
 
-    │       ├── LafApplication.java    // 메인 애플리케이션 파일
+│   ├── ItemImageController.java
 
-    │       ├── controller/
+│   ├── ItemLocationController.java
 
-    │       │   └── ItemController.java    // 컨트롤러: 요청 처리
+│   ├── LostItemController.java
 
-    │       ├── service/
+│   ├── FoundItemController.java
 
-    │       │   └── ItemService.java       // 서비스: 비즈니스 로직
+│   ├── SearchController.java
 
-    │       ├── repository/
+│   ├── UserController.java
 
-    │       │   └── ItemRepository.java    // 레포지토리: 데이터베이스 처리
+├── model/
 
-    │       ├── model/
+│   ├── Classroom.java
 
-    │       │   └── Item.java              // 엔터티 클래스: 데이터 구조
+│   ├── FoundItem.java
 
-    │       └── dto/
+│   ├── ItemComment.java
 
-    │           ├── ItemRequestDto.java    // DTO: 등록 요청 데이터
+│   ├── ItemImage.java
 
-    │           └── ItemResponseDto.java   // DTO: 검색 응답 데이터
+│   ├── ItemLocation.java
 
-    └── resources/
+│   ├── LostItem.java
 
-        ├── application.properties         // 데이터베이스 설정
+│   ├── User.java
 
-        └── schema.sql                     // 테이블 생성 SQL
+├── repository/
 
+│   ├── ItemCommentRepository.java
+
+│   ├── ItemImageRepository.java
+
+│   ├── ItemLocationRepository.java
+
+│   ├── LostItemRepository.java
+
+│   ├── FoundItemRepository.java
+
+│   ├── ClassroomRepository.java
+
+│   ├── UserRepository.java
+
+├── service/
+
+│   ├── ItemCommentService.java
+
+│   ├── ItemImageService.java
+
+│   ├── ItemLocationService.java
+
+│   ├── LostItemService.java
+
+│   ├── FoundItemService.java
+
+│   ├── SearchService.java
+
+│   ├── UserService.java
 
 
 
 ## Frontend
 
+#### 개발할 스크린 목록
 
-#### 개발한 스크린 목록
 
+#### 연동할할 API 목록
 
-#### 연동한 API 목록
 
