@@ -10,19 +10,18 @@ import java.util.List;
 @Repository
 public interface FoundItemRepository extends JpaRepository<FoundItem, Integer> {
     // 제목에 키워드 포함된 습득물 검색
+    @Query("SELECT fi FROM FoundItem fi WHERE fi.title LIKE %:keyword%")
     List<FoundItem> findByTitleContaining(String keyword);
 
     // Classrooms의 classroom_id로 습득물 검색
     @Query("SELECT fi FROM FoundItem fi " +
            "JOIN ItemLocation il ON fi.locationId = il.locationId " +
-           "JOIN Classrooms c ON il.classroomId = c.classroomId " +
-           "WHERE c.classroomId = :classroomId")
+           "WHERE il.classroomId = :classroomId")
     List<FoundItem> findByClassroomId(int classroomId);
 
     // 제목과 Classrooms의 classroom_id로 습득물 검색
     @Query("SELECT fi FROM FoundItem fi " +
            "JOIN ItemLocation il ON fi.locationId = il.locationId " +
-           "JOIN Classrooms c ON il.classroomId = c.classroomId " +
-           "WHERE c.classroomId = :classroomId AND fi.title LIKE %:keyword%")
+           "WHERE fi.title LIKE %:keyword% AND il.classroomId = :classroomId")
     List<FoundItem> findByTitleContainingAndClassroomId(String keyword, int classroomId);
 }
