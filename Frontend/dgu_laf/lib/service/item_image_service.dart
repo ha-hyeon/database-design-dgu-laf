@@ -3,7 +3,7 @@ import 'package:dgu_laf/model/item_image.dart';
 import 'package:http/http.dart' as http;
 
 class ItemImageService {
-  static const String baseUrl = 'http://localhost:8080';
+  static const String baseUrl = 'http://192.168.219.105:8080';
 
   static Future<ItemImage> addImage(ItemImage image) async {
     final response = await http.post(

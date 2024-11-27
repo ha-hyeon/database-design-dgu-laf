@@ -3,7 +3,7 @@ import 'package:dgu_laf/model/found_item.dart';
 import 'package:http/http.dart' as http;
 
 class FoundItemService {
-  static const String baseUrl = 'http://localhost:8080/found-items';
+  static const String baseUrl = 'http://192.168.219.105:8080/found-items';
 
   // CREATE
   static Future<FoundItem> createFoundItem(FoundItem foundItem) async {

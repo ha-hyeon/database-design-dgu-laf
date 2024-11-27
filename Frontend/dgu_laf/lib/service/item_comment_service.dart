@@ -3,7 +3,7 @@ import 'package:dgu_laf/model/item_comment.dart';
 import 'package:http/http.dart' as http;
 
 class ItemCommentService {
-  static const String baseUrl = 'http://localhost:8080/comments';
+  static const String baseUrl = 'http://192.168.219.105:8080/comments';
 
   // CREATE - 댓글 추가
   static Future<ItemComment> addComment(ItemComment comment) async {

@@ -3,7 +3,7 @@ import 'package:dgu_laf/model/lost_item.dart';
 import 'package:http/http.dart' as http;
 
 class LostItemService {
-  static const String baseUrl = 'http://localhost:8080/lost-items';
+  static const String baseUrl = 'http://192.168.219.105:8080/lost-items';
 
   // CREATE
   static Future<LostItem> createLostItem(LostItem lostItem) async {
