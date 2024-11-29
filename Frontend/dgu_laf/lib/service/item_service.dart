@@ -38,3 +38,48 @@ Future<Item> fetchItemDetails(int itemId) async {
     throw Exception('Failed to load item details');
   }
 }
+
+Future<List<Item>> fetchFilteredItems({
+  required String title,
+  required int classroomId,
+  required String itemType,
+}) async {
+  final url = Uri.parse(
+      '$baseUrl/items.php?action=filter&title=$title&classroom_id=$classroomId&item_type=$itemType');
+
+  final response = await http.get(url);
+
+  if (response.statusCode == 200) {
+    final List<dynamic> data = json.decode(response.body);
+    return data.map((item) => Item.fromJson(item)).toList();
+  } else {
+    throw Exception('Failed to fetch filtered items');
+  }
+}
+
+Future<Map<String, dynamic>> createItem({
+  required String itemType,
+  required String title,
+  required String itemDate,
+  required String description,
+  required int classroomId,
+  required String detailLocation,
+}) async {
+  final userId = 1; // 로그인된 사용자의 user_id를 가져오는 방법 필요
+
+  final response = await http.post(
+    Uri.parse('$baseUrl/items.php'),
+    body: {
+      'action': 'create',
+      'user_id': userId.toString(),
+      'item_type': itemType,
+      'title': title,
+      'item_date': itemDate,
+      'description': description,
+      'classroom_id': classroomId.toString(),
+      'detail_location': detailLocation,
+    },
+  );
+
+  return json.decode(response.body);
+}
