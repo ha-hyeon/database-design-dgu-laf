@@ -1,4 +1,5 @@
 import 'package:dgu_laf/screen/main/home_screen.dart';
+import 'package:dgu_laf/screen/user/login_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -52,7 +53,7 @@ class MyApp extends StatelessWidget {
           backgroundColor: const Color.fromARGB(255, 245, 251, 255),
         ),
       ),
-      home: const HomeScreen(),
+      home: const LoginScreen(),
     );
   }
 }
