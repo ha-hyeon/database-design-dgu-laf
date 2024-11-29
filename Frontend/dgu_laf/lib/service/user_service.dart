@@ -19,11 +19,22 @@ class UserService {
     if (response.statusCode == 200) {
       try {
         final data = jsonDecode(response.body);
+
         if (data['status'] == 'error') {
           throw Exception(data['message']);
         }
+
+        // user_id를 SharedPreferences에 String 형식으로 저장
+        final prefs = await SharedPreferences.getInstance();
+        final userId = data['user_id'].toString(); // user_id를 String으로 변환
+
+        // String으로 저장
+        await prefs.setString('user_id', userId);
+        print('User ID saved: $userId'); // 저장된 user_id 출력
+
         return data;
       } catch (e) {
+        print('Error: $e'); // 오류 출력
         throw Exception('Failed to parse response');
       }
     } else {

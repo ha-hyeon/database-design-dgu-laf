@@ -1,10 +1,11 @@
 import 'package:dgu_laf/model/item.dart';
 import 'package:dgu_laf/screen/item/create_item_screen.dart';
-import 'package:dgu_laf/screen/item/my_item_screen.dart';
+import 'package:dgu_laf/screen/main/myitem_screen.dart';
 import 'package:dgu_laf/screen/main/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dgu_laf/service/item_service.dart';
 import 'package:dgu_laf/widget/item_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +15,23 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  String? userId; // userId를 저장할 변수
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserId(); // 사용자 ID 로드
+  }
+
+  // SharedPreferences에서 userId 로드
+  Future<void> _loadUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      // user_id를 String 형식으로 가져옴
+      userId = prefs.getString('user_id'); // user_id를 String 형식으로 가져옴
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Icon(Icons.search, color: Colors.black38),
                 SizedBox(width: 8),
                 Text(
-                  'Search items...',
+                  '분실물 검색하기...',
                   style: TextStyle(color: Colors.black38),
                 ),
               ],
@@ -57,10 +75,20 @@ class _HomeScreenState extends State<HomeScreen> {
               );
               break;
             case 2: // 내 물건 버튼
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MyItemScreen()),
-              );
+              if (userId != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MyItemScreen(userId: userId!),
+                  ),
+                );
+              } else {
+                // userId가 null일 경우 처리 (예: 로그인 페이지로 이동)
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text('Please log in to view your items.')),
+                );
+              }
               break;
             case 3: // 글쓰기 버튼
               Navigator.push(
@@ -96,30 +124,54 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class HomeScreenContent extends StatelessWidget {
+class HomeScreenContent extends StatefulWidget {
   const HomeScreenContent({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<Item>>(
-      future: fetchRecentItems(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No recent items found'));
-        }
+  State<HomeScreenContent> createState() => _HomeScreenContentState();
+}
 
-        final items = snapshot.data!;
-        return ListView.builder(
-          itemCount: items.length,
-          itemBuilder: (context, index) {
-            return ItemWidget(item: items[index]);
-          },
-        );
-      },
+class _HomeScreenContentState extends State<HomeScreenContent> {
+  // 새로고침을 위한 Future
+  late Future<List<Item>> _futureItems;
+
+  @override
+  void initState() {
+    super.initState();
+    _futureItems = fetchRecentItems(); // 초기 데이터 로드
+  }
+
+  // 새로 고침할 때 호출되는 함수
+  Future<void> _refreshItems() async {
+    setState(() {
+      _futureItems = fetchRecentItems(); // 새로 고침을 위해 다시 데이터를 로드
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: _refreshItems, // 새로 고침 시 호출될 함수
+      child: FutureBuilder<List<Item>>(
+        future: _futureItems,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No recent items found'));
+          }
+
+          final items = snapshot.data!;
+          return ListView.builder(
+            itemCount: items.length,
+            itemBuilder: (context, index) {
+              return ItemWidget(item: items[index]);
+            },
+          );
+        },
+      ),
     );
   }
 }

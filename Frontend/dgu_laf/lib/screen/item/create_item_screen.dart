@@ -2,6 +2,7 @@ import 'package:dgu_laf/service/item_service.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CreateItemScreen extends StatefulWidget {
   const CreateItemScreen({super.key});
@@ -19,16 +20,32 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
 
   String _itemType = 'Lost'; // 기본값: Lost
   int _classroomId = 1; // 기본값: 모든 강의실
+  String? userId; // userId를 저장할 변수
 
   final List<int> _classroomIds = List.generate(33, (index) => index + 1);
-
   bool _isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _loadUserId(); // 화면이 시작될 때 userId를 로드
+  }
+
+  Future<void> _loadUserId() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userId = prefs.getString('user_id'); // user_id를 String 형식으로 가져옴
+    });
+  }
+
   void _submitForm() async {
+    // 필드가 비어있는지 확인
     if (_titleController.text.isEmpty ||
         _itemDateController.text.isEmpty ||
         _descriptionController.text.isEmpty ||
-        _detailLocationController.text.isEmpty) {
+        _detailLocationController.text.isEmpty ||
+        userId == null || // userId가 null인지 확인
+        userId!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all fields')),
       );
@@ -39,28 +56,37 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
       _isLoading = true;
     });
 
-    final response = await createItem(
-      itemType: _itemType,
-      title: _titleController.text.trim(),
-      itemDate: _itemDateController.text.trim(),
-      description: _descriptionController.text.trim(),
-      classroomId: _classroomId,
-      detailLocation: _detailLocationController.text.trim(),
-    );
-
-    setState(() {
-      _isLoading = false;
-    });
-
-    if (response['status'] == 'success') {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Item created successfully')),
+    try {
+      // 아이템 생성 API 호출
+      final response = await createItem(
+        userId: userId!, // userId를 전달
+        itemType: _itemType,
+        title: _titleController.text.trim(),
+        itemDate: _itemDateController.text.trim(),
+        description: _descriptionController.text.trim(),
+        classroomId: _classroomId,
+        detailLocation: _detailLocationController.text.trim(),
       );
-      Navigator.pop(context); // 이전 화면으로 돌아가기
-    } else {
+
+      // 서버 응답 처리
+      if (response['status'] == 'success') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Item created successfully')),
+        );
+        Navigator.pop(context); // 이전 화면으로 돌아가기
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${response['message']}')),
+        );
+      }
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${response['message']}')),
+        const SnackBar(content: Text('Failed to create item')),
       );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
