@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-const String baseUrl = 'http://192.168.219.103/dgulaf';
+const String baseUrl = 'http://192.168.219.105/dgulaf';
 
 class UserService {
   // 로그인 처리

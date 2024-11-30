@@ -1,6 +1,13 @@
+import 'dart:io';
+
+import 'package:dgu_laf/service/classroom_service.dart';
+import 'package:dgu_laf/service/image_service.dart';
 import 'package:dgu_laf/service/item_service.dart';
+import 'package:dgu_laf/service/tag_service.dart';
+import 'package:dgu_laf/service/upload_to_imgur.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,11 +26,14 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
       TextEditingController();
 
   String _itemType = 'Lost'; // 기본값: Lost
-  int _classroomId = 1; // 기본값: 모든 강의실
+  int _classroomId = 1;
+  int _tagId = 1; // 기본값: 모든 강의실
   String? userId; // userId를 저장할 변수
 
   final List<int> _classroomIds = List.generate(33, (index) => index + 1);
+  final List<int> _tagIds = List.generate(9, (index) => index + 1);
   bool _isLoading = false;
+  var _image; // 이미지 파일 변수
 
   @override
   void initState() {
@@ -39,12 +49,10 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
   }
 
   void _submitForm() async {
-    // 필드가 비어있는지 확인
     if (_titleController.text.isEmpty ||
         _itemDateController.text.isEmpty ||
         _descriptionController.text.isEmpty ||
-        _detailLocationController.text.isEmpty ||
-        userId == null || // userId가 null인지 확인
+        userId == null ||
         userId!.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill in all fields')),
@@ -57,23 +65,38 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
     });
 
     try {
-      // 아이템 생성 API 호출
       final response = await createItem(
-        userId: userId!, // userId를 전달
+        userId: userId!,
         itemType: _itemType,
         title: _titleController.text.trim(),
         itemDate: _itemDateController.text.trim(),
         description: _descriptionController.text.trim(),
         classroomId: _classroomId,
+        tagId: _tagId,
         detailLocation: _detailLocationController.text.trim(),
       );
 
-      // 서버 응답 처리
       if (response['status'] == 'success') {
+        final itemId = response['item_id'];
+
+        // Imgur 업로드된 URL을 서버로 전달
+        if (_image != null) {
+          final uploadResponse = await uploadImage(
+            itemId: itemId,
+            imageUrl: _image, // Imgur URL 전달
+          );
+
+          if (uploadResponse['status'] == 'success') {
+            print('Image associated with item successfully');
+          } else {
+            print('Failed to associate image with item');
+          }
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Item created successfully')),
         );
-        Navigator.pop(context); // 이전 화면으로 돌아가기
+        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: ${response['message']}')),
@@ -87,6 +110,52 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
       setState(() {
         _isLoading = false;
       });
+    }
+  }
+
+// 이미지 업로드 함수
+  Future<String?> _uploadImage(int itemId) async {
+    try {
+      // 이미지를 업로드하고 그 URL을 반환
+      final imageUrl = await uploadToImgur(File(_image.path)); // File로 변환
+
+      if (imageUrl != null) {
+        return imageUrl; // 업로드된 이미지 URL 반환
+      } else {
+        print('Failed to upload image');
+        return null;
+      }
+    } catch (e) {
+      print('Error uploading image: $e');
+      return null;
+    }
+  }
+
+  // 이미지 선택 함수 (예시)
+  Future<void> pickImageAndUpload() async {
+    final picker = ImagePicker();
+
+    // 갤러리에서 이미지 선택
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      final File imageFile = File(pickedFile.path);
+
+      // Imgur에 이미지 업로드
+      final imageUrl = await uploadToImgur(imageFile);
+
+      if (imageUrl != null) {
+        setState(() {
+          _image = imageUrl; // 업로드된 이미지 URL 저장
+        });
+        print('Image uploaded: $imageUrl');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to upload image')),
+        );
+      }
+    } else {
+      print('No image selected.');
     }
   }
 
@@ -163,18 +232,58 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
                 maxLines: 3,
               ),
               const SizedBox(height: 16),
+              DropdownButtonFormField<int>(
+                value: _tagId,
+                items: _tagIds.map((id) {
+                  return DropdownMenuItem<int>(
+                    value: id,
+                    child: FutureBuilder<String?>(
+                      future: TagService().getTagName(id),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Text('Loading...'); // 로딩 상태
+                        } else if (snapshot.hasError || snapshot.data == null) {
+                          return Text('Tag $id'); // 에러나 데이터 없음
+                        } else {
+                          return Text(snapshot.data!); // tag_name 표시
+                        }
+                      },
+                    ),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _tagId = value!;
+                  });
+                },
+                decoration: const InputDecoration(
+                  labelText: '태그 선택',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
               // 강의실 선택
               DropdownButtonFormField<int>(
                 value: _classroomId,
-                items: [
-                  const DropdownMenuItem(value: 1, child: Text('전체')), // 기본 옵션
-                  ..._classroomIds.where((id) => id != 1).map((id) {
-                    return DropdownMenuItem(
-                      value: id,
-                      child: Text('Classroom $id'),
-                    );
-                  }),
-                ],
+                items: _classroomIds.map((id) {
+                  return DropdownMenuItem<int>(
+                    value: id,
+                    child: FutureBuilder<String?>(
+                      future: ClassroomService().getBuildingName(id),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Text('Loading...'); // 로딩 상태
+                        } else if (snapshot.hasError || snapshot.data == null) {
+                          return Text('Classroom $id'); // 에러나 데이터 없음
+                        } else {
+                          return Text(snapshot.data!); // building_name 표시
+                        }
+                      },
+                    ),
+                  );
+                }).toList(),
                 onChanged: (value) {
                   setState(() {
                     _classroomId = value!;
@@ -195,6 +304,23 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   prefixIcon: const Icon(Icons.location_on),
+                ),
+              ),
+              const SizedBox(height: 24),
+              // 이미지 선택
+              GestureDetector(
+                onTap: () async {
+                  await pickImageAndUpload();
+                },
+                child: Container(
+                  height: 150,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: _image == null
+                      ? const Center(child: Text('이미지를 선택하세요'))
+                      : Image.network(_image), // 업로드된 이미지 URL을 표시
                 ),
               ),
               const SizedBox(height: 24),
@@ -222,12 +348,11 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 122, vertical: 14),
-                    backgroundColor: Colors.blueAccent,
+                        horizontal: 24, vertical: 12),
+                    backgroundColor: const Color.fromARGB(255, 255, 203, 144),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    elevation: 5,
                   ),
                 ),
               ),

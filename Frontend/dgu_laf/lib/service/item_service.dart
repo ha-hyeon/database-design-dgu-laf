@@ -3,7 +3,7 @@ import 'package:dgu_laf/model/item.dart';
 import 'package:http/http.dart' as http;
 
 // API URL 설정
-const String baseUrl = 'http://192.168.219.103/dgulaf';
+const String baseUrl = 'http://192.168.219.105/dgulaf';
 
 // 최근 아이템 목록을 가져오는 함수
 Future<List<Item>> fetchRecentItems() async {
@@ -45,8 +45,8 @@ Future<List<Item>> fetchMyItems(String userId) async {
 }
 
 Future<Item> fetchItemDetails(int itemId) async {
-  final response =
-      await http.get(Uri.parse('$baseUrl/items.php?item_id=$itemId'));
+  final response = await http
+      .get(Uri.parse('$baseUrl/items.php?action=get_item&item_id=$itemId'));
 
   if (response.statusCode == 200) {
     final Map<String, dynamic> data = json.decode(response.body);
@@ -62,16 +62,20 @@ Future<Item> fetchItemDetails(int itemId) async {
 Future<List<Item>> fetchFilteredItems({
   required String title,
   required int classroomId,
+  required int tagId,
   required String itemType,
 }) async {
   final url = Uri.parse(
-      '$baseUrl/items.php?action=filter&title=$title&classroom_id=$classroomId&item_type=$itemType');
+      '$baseUrl/items.php?action=filter&title=$title&classroom_id=$classroomId&tag_id=$tagId&item_type=$itemType');
 
   final response = await http.get(url);
 
   if (response.statusCode == 200) {
-    final List<dynamic> data = json.decode(response.body);
-    return data.map((item) => Item.fromJson(item)).toList();
+    final data = json.decode(response.body);
+
+    // JSON 응답에서 바로 items 배열을 가져옵니다.
+    final List<dynamic> items = data; // 데이터 전체가 배열일 경우 바로 할당
+    return items.map((item) => Item.fromJson(item)).toList();
   } else {
     throw Exception('Failed to fetch filtered items');
   }
@@ -84,6 +88,7 @@ Future<Map<String, dynamic>> createItem({
   required String itemDate,
   required String description,
   required int classroomId,
+  required int tagId,
   required String detailLocation,
 }) async {
   final response = await http.post(
@@ -96,6 +101,7 @@ Future<Map<String, dynamic>> createItem({
       'item_date': itemDate,
       'description': description,
       'classroom_id': classroomId.toString(),
+      'tag_id': tagId.toString(),
       'detail_location': detailLocation,
     },
   );

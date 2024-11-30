@@ -1,4 +1,6 @@
 import 'package:dgu_laf/screen/main/search_result_screen.dart';
+import 'package:dgu_laf/service/classroom_service.dart';
+import 'package:dgu_laf/service/tag_service.dart';
 import 'package:flutter/material.dart';
 import 'package:dgu_laf/model/item.dart';
 import 'package:dgu_laf/service/item_service.dart';
@@ -14,15 +16,17 @@ class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _titleController = TextEditingController();
   String _itemType = 'Lost'; // 기본값
   int _classroomId = 1; // 기본값: 모든 강의실
-
+  int _tagId = 1;
   // 강의실 목록
   final List<int> _classroomIds = List.generate(33, (index) => index + 1);
+  final List<int> _tagIds = List.generate(9, (index) => index + 1);
 
   void _performSearch() async {
     // 필터링된 아이템 목록 가져오기
     final items = await fetchFilteredItems(
       title: _titleController.text.trim(),
       classroomId: _classroomId,
+      tagId: _tagId,
       itemType: _itemType,
     );
 
@@ -74,27 +78,63 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
             const SizedBox(height: 16),
+            DropdownButtonFormField<int>(
+              value: _tagId,
+              items: _tagIds.map((id) {
+                return DropdownMenuItem<int>(
+                  value: id,
+                  child: FutureBuilder<String?>(
+                    future: TagService().getTagName(id),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Text('Loading...'); // 로딩 상태
+                      } else if (snapshot.hasError || snapshot.data == null) {
+                        return Text('Tag $id'); // 에러나 데이터 없음
+                      } else {
+                        return Text(snapshot.data!); // tag_name 표시
+                      }
+                    },
+                  ),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _tagId = value!;
+                });
+              },
+              decoration: const InputDecoration(
+                labelText: '태그 선택',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 16),
             // 강의실 선택
             DropdownButtonFormField<int>(
               value: _classroomId,
-              items: [
-                const DropdownMenuItem(
-                    value: 1, child: Text('All Classrooms')), // 기본 옵션
-                ..._classroomIds.where((id) => id != 1).map(
-                      // 1을 제외
-                      (id) => DropdownMenuItem(
-                        value: id,
-                        child: Text('Classroom $id'),
-                      ),
-                    ),
-              ],
+              items: _classroomIds.map((id) {
+                return DropdownMenuItem<int>(
+                  value: id,
+                  child: FutureBuilder<String?>(
+                    future: ClassroomService().getBuildingName(id),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Text('Loading...'); // 로딩 상태
+                      } else if (snapshot.hasError || snapshot.data == null) {
+                        return Text('Classroom $id'); // 에러나 데이터 없음
+                      } else {
+                        return Text(snapshot.data!); // building_name 표시
+                      }
+                    },
+                  ),
+                );
+              }).toList(),
               onChanged: (value) {
                 setState(() {
                   _classroomId = value!;
                 });
               },
               decoration: const InputDecoration(
-                labelText: 'Classroom',
+                labelText: '강의실 선택',
                 border: OutlineInputBorder(),
               ),
             ),

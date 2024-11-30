@@ -1,4 +1,5 @@
 import 'package:dgu_laf/screen/item/item_detail_screen.dart';
+import 'package:dgu_laf/service/classroom_service.dart';
 import 'package:dgu_laf/service/item_service.dart';
 import 'package:flutter/material.dart';
 import 'package:dgu_laf/model/item.dart';
@@ -88,8 +89,23 @@ class MyItemWidget extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      '${item.createdAt}\n강의실: ${item.classroomId}',
+                      '${item.createdAt}\n강의실: ',
                       style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                    FutureBuilder<String?>(
+                      future: ClassroomService().getBuildingName(
+                          item.classroomId), // building_name 조회
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Text('Loading...'); // 로딩 중
+                        } else if (snapshot.hasError || snapshot.data == null) {
+                          return Text(
+                              'Classroom ${item.classroomId}'); // 에러 시 기본값 표시
+                        } else {
+                          return Text(snapshot.data!); // building_name 표시
+                        }
+                      },
                     ),
                     if (item.userId.toString() == userId) // 작성자일 경우만 보여줌
                       Row(

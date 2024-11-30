@@ -5,6 +5,7 @@ class Item {
   final String description;
   final String itemDate;
   final int classroomId;
+  final int tagId;
   final String detailLocation;
   final String createdAt;
   final String itemType; // Lost or Found
@@ -16,6 +17,7 @@ class Item {
     required this.description,
     required this.itemDate,
     required this.classroomId,
+    required this.tagId,
     required this.detailLocation,
     required this.createdAt,
     required this.itemType,
@@ -29,8 +31,8 @@ class Item {
       title: json['title'],
       description: json['description'],
       itemDate: json['item_date'],
-      classroomId:
-          int.tryParse(json['classroom_id'].toString()) ?? 0, // 문자열을 int로 변환
+      classroomId: int.tryParse(json['classroom_id'].toString()) ?? 1,
+      tagId: int.tryParse(json['tagId'].toString()) ?? 1, // 문자열을 int로 변환
       detailLocation: json['detail_location'] ?? '',
       createdAt: json['created_at'],
       itemType: json['item_type'],

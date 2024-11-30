@@ -1,4 +1,5 @@
 import 'package:dgu_laf/screen/item/add_comment_screen.dart';
+import 'package:dgu_laf/service/classroom_service.dart';
 import 'package:flutter/material.dart';
 import 'package:dgu_laf/model/item.dart';
 import 'package:dgu_laf/service/item_service.dart';
@@ -110,11 +111,41 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    const Icon(Icons.class_, size: 18, color: Colors.grey),
-                    const SizedBox(width: 8),
                     Text(
-                      '강의실: ${item.classroomId}',
+                      '강의실: ', // '강의실:' 텍스트
                       style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                    FutureBuilder<String?>(
+                      future: ClassroomService().getBuildingName(
+                          item.classroomId), // building_name 조회
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const Text('Loading...'); // 로딩 중
+                        } else if (snapshot.hasError || snapshot.data == null) {
+                          return Text(
+                            'Classroom ${item.classroomId}', // 에러 시 classroomId 표시
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall, // 스타일 적용
+                          );
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.isEmpty) {
+                          return Text(
+                            'Building name not found', // building_name이 없으면 기본 텍스트 표시
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall, // 스타일 적용
+                          );
+                        } else {
+                          return Text(
+                            snapshot.data!, // building_name 표시
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall, // 스타일 적용
+                          );
+                        }
+                      },
                     ),
                   ],
                 ),

@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CommentService {
-  static const String baseUrl = 'http://192.168.219.103/dgulaf';
+  static const String baseUrl = 'http://192.168.219.105/dgulaf';
 
   /// 댓글 목록을 가져오는 함수
   static Future<List<Map<String, dynamic>>> fetchComments(int itemId) async {
