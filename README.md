@@ -1,98 +1,41 @@
 # 데이터베이스 설계 프로젝트
 동국대 분실물센터 앱 / DGU Lost And Found (dgu_laf)
-
+AI융합학부 2022113162 안하현
 
 ## Backend
 #### 데이터베이스 스키마(schema.sql 참조)
 
 Users
 
-LostItems
-
-FoundItems
-
-ItemLocation
+Items
 
 Classrooms
+
+Tags
 
 ItemComments
 
 ItemImages
 
 
-#### src/ 디렉토리
+#### php파일
 
-src/main/java/com/dgulaf/
+db.php
 
-├── controller/
+items.php
 
-│   ├── ItemCommentController.java
+comments.php
 
-│   ├── ItemImageController.java
+users.php
 
-│   ├── ItemLocationController.java
+classrooms.php
 
-│   ├── LostItemController.java
-
-│   ├── FoundItemController.java
-
-│   ├── SearchController.java
-
-│   ├── UserController.java
-
-├── model/
-
-│   ├── Classroom.java
-
-│   ├── FoundItem.java
-
-│   ├── ItemComment.java
-
-│   ├── ItemImage.java
-
-│   ├── ItemLocation.java
-
-│   ├── LostItem.java
-
-│   ├── User.java
-
-├── repository/
-
-│   ├── ItemCommentRepository.java
-
-│   ├── ItemImageRepository.java
-
-│   ├── ItemLocationRepository.java
-
-│   ├── LostItemRepository.java
-
-│   ├── FoundItemRepository.java
-
-│   ├── ClassroomRepository.java
-
-│   ├── UserRepository.java
-
-├── service/
-
-│   ├── ItemCommentService.java
-
-│   ├── ItemImageService.java
-
-│   ├── ItemLocationService.java
-
-│   ├── LostItemService.java
-
-│   ├── FoundItemService.java
-
-│   ├── SearchService.java
-
-│   ├── UserService.java
-
+images.php
 
 
 ## Frontend
 
-#### 개발할 스크린
+#### 개발한 스크린과 기능
 로그인(아이디, 비번, 회원가입 버튼)
 
 회원가입(아이디, 비번, 전번)
@@ -111,12 +54,11 @@ src/main/java/com/dgulaf/
 
 내가 쓴 글(위젯이용, 수정/삭제 기능)
 
-#### 개발할 위젯
+#### 개발한 위젯과 기능
 아이템 위젯(사진, 제목, 시간, 강의실)
 
 내가쓴 아이템 위젯(아이템 위젯 + 수정삭제버튼)
 
 댓글 위젯(글쓴이 이름, 내용, 삭제버튼)
 
-#### 연동할 API
 
