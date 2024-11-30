@@ -32,7 +32,7 @@ class Item {
       description: json['description'],
       itemDate: json['item_date'],
       classroomId: int.tryParse(json['classroom_id'].toString()) ?? 1,
-      tagId: int.tryParse(json['tagId'].toString()) ?? 1, // 문자열을 int로 변환
+      tagId: int.tryParse(json['tag_id'].toString()) ?? 1, // 문자열을 int로 변환
       detailLocation: json['detail_location'] ?? '',
       createdAt: json['created_at'],
       itemType: json['item_type'],

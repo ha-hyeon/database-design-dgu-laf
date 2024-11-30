@@ -8,14 +8,26 @@ class MyItemWidget extends StatelessWidget {
   final Item item;
   final String userId; // 작성자 ID
 
-  const MyItemWidget({super.key, required this.item, required this.userId});
+  final Map<int, String> tagImageMap = {
+    1: "assets/images/no_image.jpg",
+    2: "assets/images/electronic.jpg",
+    3: "assets/images/wallet.jpg",
+    4: "assets/images/card.png",
+    5: "assets/images/person.jpg",
+    6: "assets/images/clothes.jpg",
+    7: "assets/images/glasses.jpg",
+    8: "assets/images/ring.jpg",
+    9: "assets/images/no_image.jpg", // 태그 9는 no_image로 설정
+  };
+
+  MyItemWidget({super.key, required this.item, required this.userId});
 
   @override
   Widget build(BuildContext context) {
     final String labelText = item.itemType == "Lost" ? "찾아주세요" : "주인찾아요";
     final Color labelColor =
         item.itemType == "Lost" ? Theme.of(context).primaryColor : Colors.green;
-
+    String? imagePath = tagImageMap[item.tagId];
     // Text editing controllers for updating the item
     final TextEditingController titleController =
         TextEditingController(text: item.title);
@@ -45,10 +57,18 @@ class MyItemWidget extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(15),
                 child: Image.asset(
-                  "assets/images/no_image.jpg",
+                  imagePath!,
                   width: 90,
                   height: 90,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      "assets/images/no_image.jpg", // 기본 이미지
+                      width: 90,
+                      height: 90,
+                      fit: BoxFit.cover,
+                    );
+                  },
                 ),
               ),
               const SizedBox(width: 16),

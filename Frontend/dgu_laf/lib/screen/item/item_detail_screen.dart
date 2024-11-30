@@ -19,6 +19,18 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
   late Future<Item> _itemFuture;
   late Future<List<Map<String, dynamic>>> _commentsFuture;
 
+  final Map<int, String> tagImageMap = {
+    1: "assets/images/no_image.jpg",
+    2: "assets/images/electronic.jpg",
+    3: "assets/images/wallet.jpg",
+    4: "assets/images/card.png",
+    5: "assets/images/person.jpg",
+    6: "assets/images/clothes.jpg",
+    7: "assets/images/glasses.jpg",
+    8: "assets/images/ring.jpg",
+    9: "assets/images/no_image.jpg", // 태그 9는 no_image로 설정
+  };
+
   @override
   void initState() {
     super.initState();
@@ -49,17 +61,29 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
               ? Theme.of(context).primaryColor
               : Colors.green;
 
+          // 태그 ID에 따른 이미지 경로 가져오기 (기본 이미지 설정)
+          String imagePath = tagImageMap[item.tagId] ??
+              "assets/images/no_image.jpg"; // 기본 이미지 설정
+
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: ListView(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(15),
                   child: Image.asset(
-                    'assets/images/no_image.jpg',
+                    imagePath,
+                    width: 90,
                     height: 200,
-                    width: double.infinity,
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        "assets/images/no_image.jpg", // 기본 이미지
+                        width: 90,
+                        height: 90,
+                        fit: BoxFit.cover,
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(height: 16),

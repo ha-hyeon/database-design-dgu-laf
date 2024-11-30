@@ -3,18 +3,39 @@ import 'package:dgu_laf/service/classroom_service.dart';
 import 'package:flutter/material.dart';
 import 'package:dgu_laf/model/item.dart'; // ItemDetailScreen import
 
-class ItemWidget extends StatelessWidget {
+class ItemWidget extends StatefulWidget {
   final Item item;
 
   const ItemWidget({super.key, required this.item});
 
   @override
+  State<ItemWidget> createState() => _ItemWidgetState();
+}
+
+class _ItemWidgetState extends State<ItemWidget> {
+  // 태그 ID와 이미지 경로 매핑
+  final Map<int, String> tagImageMap = {
+    1: "assets/images/no_image.jpg",
+    2: "assets/images/electronic.jpg",
+    3: "assets/images/wallet.jpg",
+    4: "assets/images/card.png",
+    5: "assets/images/person.jpg",
+    6: "assets/images/clothes.jpg",
+    7: "assets/images/glasses.jpg",
+    8: "assets/images/ring.jpg",
+    9: "assets/images/no_image.jpg", // 태그 9는 no_image로 설정
+  };
+
+  @override
   Widget build(BuildContext context) {
     // 아이템 유형 라벨 설정
-    final String labelText = item.itemType == "Lost" ? "찾아주세요" : "주인찾아요";
-    final Color labelColor = item.itemType == "Lost"
+    final String labelText = widget.item.itemType == "Lost" ? "찾아주세요" : "주인찾아요";
+    final Color labelColor = widget.item.itemType == "Lost"
         ? Theme.of(context).primaryColor // 파란색
         : Colors.green; // 초록색
+
+    // 태그 ID에 따른 이미지 경로 가져오기 (기본 이미지 설정)
+    String? imagePath = tagImageMap[widget.item.tagId];
 
     return GestureDetector(
       onTap: () {
@@ -22,7 +43,7 @@ class ItemWidget extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ItemDetailScreen(itemId: item.itemId),
+            builder: (context) => ItemDetailScreen(itemId: widget.item.itemId),
           ),
         );
       },
@@ -41,10 +62,18 @@ class ItemWidget extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.circular(15),
                 child: Image.asset(
-                  "assets/images/no_image.jpg",
+                  imagePath!,
                   width: 90,
                   height: 90,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.asset(
+                      "assets/images/no_image.jpg", // 기본 이미지
+                      width: 90,
+                      height: 90,
+                      fit: BoxFit.cover,
+                    );
+                  },
                 ),
               ),
               const SizedBox(width: 16),
@@ -77,7 +106,7 @@ class ItemWidget extends StatelessWidget {
                         // 제목
                         Expanded(
                           child: Text(
-                            item.title,
+                            widget.item.title,
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -90,19 +119,19 @@ class ItemWidget extends StatelessWidget {
                     const SizedBox(height: 12),
                     // 설명 텍스트
                     Text(
-                      item.createdAt,
+                      widget.item.createdAt,
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                     FutureBuilder<String?>(
                       future: ClassroomService().getBuildingName(
-                          item.classroomId), // building_name 조회
+                          widget.item.classroomId), // building_name 조회
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return const Text('Loading...'); // 로딩 중
                         } else if (snapshot.hasError || snapshot.data == null) {
                           return Text(
-                              'Classroom ${item.classroomId}'); // 에러 시 기본값 표시
+                              'Classroom ${widget.item.classroomId}'); // 에러 시 기본값 표시
                         } else if (!snapshot.hasData ||
                             snapshot.data!.isEmpty) {
                           return Text(

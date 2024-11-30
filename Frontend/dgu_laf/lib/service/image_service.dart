@@ -30,7 +30,7 @@ Future<Map<String, dynamic>> uploadImage({
 
 Future<List<String>> fetchItemImages(int itemId) async {
   final response = await http.get(
-    Uri.parse('http://192.168.219.103/dgulaf/images.php?item_id=$itemId'),
+    Uri.parse('http://192.168.219.105/dgulaf/images.php?item_id=$itemId'),
   );
 
   List<dynamic> data = json.decode(response.body);
