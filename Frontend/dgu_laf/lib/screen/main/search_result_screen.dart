@@ -11,10 +11,11 @@ class SearchResultScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Search Results'),
+        backgroundColor: const Color.fromARGB(255, 255, 237, 215),
+        title: const Text('검색 결과'),
       ),
       body: items.isEmpty
-          ? const Center(child: Text('No items match your search criteria.'))
+          ? const Center(child: Text('분실물이 없습니다.'))
           : ListView.builder(
               itemCount: items.length,
               itemBuilder: (context, index) {

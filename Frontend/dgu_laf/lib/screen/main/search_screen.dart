@@ -43,6 +43,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 255, 237, 215),
         title: const Text('분실물 검색'),
       ),
       body: Padding(
@@ -73,7 +74,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 });
               },
               decoration: const InputDecoration(
-                labelText: 'Item Type',
+                labelText: '찾아주세요/주인찾아요',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -103,7 +104,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 });
               },
               decoration: const InputDecoration(
-                labelText: '태그 선택',
+                labelText: '카테고리 선택',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -144,7 +145,7 @@ class _SearchScreenState extends State<SearchScreen> {
               child: ElevatedButton.icon(
                 onPressed: _performSearch,
                 icon: const Icon(Icons.search),
-                label: const Text('Search'),
+                label: const Text('검색'),
               ),
             ),
           ],

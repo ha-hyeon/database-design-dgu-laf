@@ -50,6 +50,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 255, 237, 215),
         title: Text('회원가입'),
       ),
       body: Padding(

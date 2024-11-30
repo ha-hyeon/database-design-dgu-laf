@@ -30,11 +30,9 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (response['status'] == 'success') {
-        // 로그인 성공 시
         final prefs = await SharedPreferences.getInstance();
         prefs.setString('user_id', response['user_id'].toString());
 
-        // 성공하면 HomeScreen으로 이동
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -60,9 +58,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('로그인'),
-      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           return SingleChildScrollView(
@@ -72,8 +67,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center, // 중앙 정렬
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Center(child: Image.asset('assets/images/dongguk.png')),
                     Text('아이디', style: Theme.of(context).textTheme.titleSmall),
                     const SizedBox(height: 8),
                     TextField(
@@ -111,12 +108,15 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).primaryColor,
                           minimumSize: const Size(double.infinity, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                         child: const Text('로그인'),
                       ),
+                      const SizedBox(height: 10),
                       TextButton(
                         onPressed: () {
-                          // 회원가입 화면으로 이동
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -124,7 +124,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           );
                         },
-                        child: const Text('회원가입'),
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        child: const Text(
+                          '회원가입',
+                          style: TextStyle(color: Colors.blue),
+                        ),
                       ),
                     ],
                   ],

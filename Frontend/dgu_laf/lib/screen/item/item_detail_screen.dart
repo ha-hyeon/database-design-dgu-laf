@@ -42,6 +42,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 255, 237, 215),
         title: const Text('분실물 정보'),
       ),
       body: FutureBuilder<Item>(
@@ -52,7 +53,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData) {
-            return const Center(child: Text('Item not found.'));
+            return const Center(child: Text('아이템이 없어요'));
           }
 
           final item = snapshot.data!;
@@ -217,7 +218,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                           );
                         } else if (!commentSnapshot.hasData ||
                             commentSnapshot.data!.isEmpty) {
-                          return const Center(child: Text('No comments yet.'));
+                          return const Center(child: Text('댓글이 아직 없습니다'));
                         }
 
                         final comments = commentSnapshot.data!;
@@ -267,7 +268,7 @@ class _ItemDetailScreenState extends State<ItemDetailScreen> {
                           }
                         },
                         icon: const Icon(Icons.comment),
-                        label: const Text('Add Comment'),
+                        label: const Text('댓글달기'),
                       ),
                     ),
                   ],
