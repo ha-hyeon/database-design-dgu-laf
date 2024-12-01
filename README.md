@@ -3,19 +3,14 @@
 AI융합학부 2022113162 안하현
 
 ## Backend
-#### 데이터베이스 스키마(schema.sql 참조)
+#### 데이터베이스 테이블
 
-Users
-
-Items
-
-Classrooms
-
-Tags
-
-ItemComments
-
-ItemImages
+Users,
+Items,
+Classrooms,
+Tags,
+ItemComments,
+ItemImages,
 
 
 #### php파일
