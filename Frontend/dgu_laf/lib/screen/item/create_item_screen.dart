@@ -164,7 +164,7 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('글 쓰기'),
-        backgroundColor: const Color.fromARGB(255, 255, 203, 144),
+        backgroundColor: const Color.fromARGB(255, 255, 237, 215),
         centerTitle: true,
       ),
       body: Padding(

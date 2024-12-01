@@ -36,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 255, 237, 215),
         title: GestureDetector(
           onTap: () {
             // 검색 필드를 클릭하면 검색 화면으로 이동
@@ -104,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
-            label: 'Home',
+            label: '홈',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search),

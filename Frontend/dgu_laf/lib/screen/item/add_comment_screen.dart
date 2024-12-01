@@ -69,6 +69,7 @@ class _AddCommentScreenState extends State<AddCommentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 255, 237, 215),
         title: const Text('댓글 작성'),
       ),
       body: Padding(

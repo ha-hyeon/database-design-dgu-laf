@@ -12,7 +12,8 @@ class MyItemScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Items'),
+        backgroundColor: const Color.fromARGB(255, 255, 237, 215),
+        title: Text('내가 쓴 글'),
       ),
       body: FutureBuilder<List<Item>>(
         future: fetchMyItems(userId), // 사용자가 작성한 아이템 목록을 가져오는 함수
